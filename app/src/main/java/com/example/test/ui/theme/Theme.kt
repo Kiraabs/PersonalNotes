@@ -62,14 +62,18 @@ fun NoteListScreen(noteDao: NoteDao, navController: NavController) {
                         contentDescription = "Logo",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.padding(vertical = 15.dp, horizontal = 15.dp))
-                    Text("Электронный конспект", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 28.sp)
+                    Text(
+                        "Электронный конспект",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 28.sp)
                 }
             )
         },
         bottomBar = {
             FooterRow(
                 content = {
-                    DefAppActionButton(
+                    ActionButton(
                         onClick = {
                             navController.navigate("add_note") {
                                 popUpTo("add_note") {
@@ -102,14 +106,22 @@ fun AddEditNoteScreen(noteDao: NoteDao, onNoteSaved: () -> Unit = {}, context: C
     Scaffold(
         topBar = {
             HeaderRow(content = {
-                Text("Добавить заметку", modifier = Modifier.padding(20.dp), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 28.sp)
+                var text = "Добавить заметку"
+                if (SelectedNote != null)
+                    text = "Редактирование заметки"
+                Text(
+                    text,
+                    modifier = Modifier.padding(20.dp),
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 28.sp)
             })
         },
         bottomBar = {
             FooterRow(
                 content = {
                     if (SelectedNote != null){
-                        DefAppActionButton(
+                        ActionButton(
                             onClick = {
                                 scope.launch {
                                     noteDao.delete(SelectedNote!!)
@@ -118,7 +130,7 @@ fun AddEditNoteScreen(noteDao: NoteDao, onNoteSaved: () -> Unit = {}, context: C
                             },
                             icon = Icons.Default.Clear)
                     }
-                    DefAppActionButton(
+                    ActionButton(
                         onClick = {
                             if (title.isEmpty()){
                                 Toast.makeText(context, "Note title can't be empty!", Toast.LENGTH_LONG).show()
@@ -183,7 +195,8 @@ fun NoteCard(note: Note, navController: NavController)
 @Composable
 fun HeaderRow(content: @Composable (RowScope.() -> Unit)) {
     Row(
-        modifier = Modifier.fillMaxWidth().background(MainGreen, shape = RoundedCornerShape(bottomStart = 10.dp, bottomEnd = 10.dp)).statusBarsPadding()) {
+        modifier = Modifier.fillMaxWidth().background(MainGreen,
+            shape = RoundedCornerShape(bottomStart = 10.dp, bottomEnd = 10.dp)).statusBarsPadding()) {
         Row(verticalAlignment = Alignment.CenterVertically, content = content)
     }
 }
@@ -198,12 +211,13 @@ fun FooterRow (
 }
 
 @Composable
-fun DefAppActionButton(onClick: () -> Unit = {}, icon: ImageVector = Icons.Filled.Add) {
-    FloatingActionButton(modifier = Modifier.padding(10.dp),
+fun ActionButton(onClick: () -> Unit = {}, icon: ImageVector = Icons.Filled.Add) {
+    FloatingActionButton(
+        modifier = Modifier.padding(10.dp),
         containerColor = Color.White,
         contentColor = MainGreen,
         shape = CircleShape,
-        onClick = { onClick() },
+        onClick = { onClick() }
     ) {
         Icon(icon, icon.toString())
     }
